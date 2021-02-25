@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".example.MainActivity"
     android:orientation="vertical">
 
     <View
@@ -37,7 +37,7 @@
 
     </FrameLayout>
 
-    <com.klim.tcharts.CustomScrollView
+    <com.klim.tcharts.example.CustomScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -52,7 +52,7 @@
 
         </LinearLayout>
 
-    </com.klim.tcharts.CustomScrollView>
+    </com.klim.tcharts.example.CustomScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

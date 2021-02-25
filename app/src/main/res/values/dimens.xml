@@ -1,3 +1,4 @@
 <resources>
     <dimen name="statusBarHeight">24dp</dimen>
+    <dimen name="chartBottomMargin">36dp</dimen>
 </resources>

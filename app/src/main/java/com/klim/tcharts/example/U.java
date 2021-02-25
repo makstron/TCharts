@@ -1,4 +1,4 @@
-package com.klim.tcharts.helpers;
+package com.klim.tcharts.example;
 
 import android.animation.ValueAnimator;
 import android.content.Context;

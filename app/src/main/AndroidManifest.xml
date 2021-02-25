@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.klim.tcharts">
+    package="com.klim.tcharts.example">
 
     <application
         android:icon="@mipmap/ic_launcher"

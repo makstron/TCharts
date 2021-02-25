@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TChartsExample</string>
+
+    <string name="error_loading_example">Json Example not allowed</string>
 </resources>

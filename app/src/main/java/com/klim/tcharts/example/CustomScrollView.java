@@ -1,4 +1,4 @@
-package com.klim.tcharts;
+package com.klim.tcharts.example;
 
 import android.content.Context;
 import android.util.AttributeSet;

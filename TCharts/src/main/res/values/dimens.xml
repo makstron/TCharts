@@ -1,3 +1,33 @@
 <resources>
- 
+    <dimen name="tapCircleRadius">48dp</dimen>
+    <integer name="tapCircleDuration">400</integer>
+
+    <dimen name="chartPadding">18dp</dimen>
+    <dimen name="chartTitleSize">16dp</dimen>
+
+    <!-- detail view -->
+    <dimen name="detailViewSize">327dp</dimen>
+    <dimen name="detailViewBottomLineHeight">24dp</dimen>
+    <dimen name="fonLineswWeight">0.5dp</dimen>
+    <dimen name="chartDetailLineHeight">2.0dp</dimen>
+    <dimen name="labelSize">11sp</dimen>
+    <dimen name="labelPadding">6dp</dimen>
+    <dimen name="selectedLineWeight">1.5dp</dimen>
+    <dimen name="selectedCircleRadius">4dp</dimen>
+    <dimen name="infoWindowRoutedCorners">6dp</dimen>
+    <dimen name="infoWindowPadding">6dp</dimen>
+    <dimen name="infoWindowShadow">1.5dp</dimen>
+    <dimen name="infoWindowTitleSize">16dp</dimen>
+    <dimen name="infoWindowLabelSize">10dp</dimen>
+    <dimen name="infoWindowLabelValSize">16dp</dimen>
+
+    <!-- nav view -->
+    <dimen name="chartNavLineHeight">42dp</dimen>
+    <dimen name="chartNavBorderWidth">5dp</dimen>
+    <dimen name="chartNavBorderTopHeight">1.5dp</dimen>
+    <dimen name="chartNavLineTopBottomPadding">3dp</dimen>
+
+    <dimen name="chartNavLineWeight">1.2dp</dimen>
+    <dimen name="chartNavPointWeight">0.9dp</dimen>
+
 </resources>

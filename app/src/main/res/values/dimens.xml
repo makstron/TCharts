@@ -1,4 +1,7 @@
 <resources>
     <dimen name="statusBarHeight">24dp</dimen>
     <dimen name="chartBottomMargin">36dp</dimen>
+
+    <!-- check box -->
+    <dimen name="cbHorizontalMargin">16dp</dimen>
 </resources>

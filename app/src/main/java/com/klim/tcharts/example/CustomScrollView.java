@@ -20,7 +20,7 @@ public class CustomScrollView extends ScrollView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        onTouchEvent(ev);
+//        onTouchEvent(ev);
         return false;
     }
 }

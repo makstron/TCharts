@@ -1,4 +1,4 @@
-package com.klim.tcharts;
+package com.klim.tcharts.views;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,6 +10,8 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.view.View;
 
+import com.klim.tcharts.Colors;
+import com.klim.tcharts.R;
 import com.klim.tcharts.interfaces.OnShowLinesListener;
 import com.klim.tcharts.utils.ColorU;
 import com.klim.tcharts.utils.PaintU;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class InfoWindowView extends BaseView implements OnShowLinesListener {
+    private Colors colors;
 
     private float infoWindowRoutedCorners;
     private float padding;
@@ -32,7 +35,7 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
 
     private long time;
     private ArrayList<String> names;
-    private ArrayList<Integer> colors;
+    private ArrayList<Integer> chartLinesColor;
     private ArrayList<Integer> values;
 
     private Paint bBitmap;
@@ -53,8 +56,9 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
     private SimpleDateFormat dayFormat = new SimpleDateFormat("E,");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd");
 
-    public InfoWindowView(View view) {
+    public InfoWindowView(View view, Colors colors) {
         super(view);
+        this.colors = colors;
 
         infoWindowRoutedCorners = getDimen(R.dimen.infoWindowRoutedCorners);
         padding = getDimen(R.dimen.infoWindowPadding);
@@ -69,10 +73,10 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
     private void createPaints() {
         bBitmap = new Paint(Paint.FILTER_BITMAP_FLAG);
 
-        pBackground = PaintU.createPaint(getColor(R.color.infoWindowBackground), Paint.Style.FILL);
-        pBackground.setShadowLayer(infoWindowShadow, 0.0f, 0.0f, getColor(R.color.infoWindowShadowColor));
+        pBackground = PaintU.createPaint(colors.infoWindowBackground, Paint.Style.FILL);
+        pBackground.setShadowLayer(infoWindowShadow, 0.0f, 0.0f, colors.infoWindowShadowColor);
 
-        pTitle = PaintU.createPaint(getColor(R.color.infoWindowTitleColor), Paint.Style.FILL);
+        pTitle = PaintU.createPaint(colors.infoWindowTitleColor, Paint.Style.FILL);
         pTitle.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         pTitle.setTextSize(infoWindowTitleSize);
 
@@ -85,7 +89,7 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
     }
 
     @Override
-    public void prepareUi() {
+    public void prepareDataForPrinting(boolean hardPrepare) {
 
     }
 
@@ -111,8 +115,8 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
         //draw values
         for (int i = 0; i < values.size(); i++) {
             if (getView().linesForShow[i]) {
-                pLabel.setColor(ColorU.colorSetA(colors.get(i), a));
-                pValue.setColor(ColorU.colorSetA(colors.get(i), a));
+                pLabel.setColor(ColorU.colorSetA(chartLinesColor.get(i), a));
+                pValue.setColor(ColorU.colorSetA(chartLinesColor.get(i), a));
                 canvas.drawText(names.get(i), posLabel.get(i).x + posX, posLabel.get(i).y + posY, pLabel);
                 canvas.drawText(values.get(i) + "", posValues.get(i).x + posX, posValues.get(i).y + posY, pValue);
             }
@@ -121,7 +125,7 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
     }
 
     /**
-     * Calculate width & height for info window
+     * Calculate width and height for info window
      * Calculate positions for info window elements
      */
     public void calcSizePositions() {
@@ -162,7 +166,7 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
             widthMonth = Math.max(widthMonth, textBounds.width());
         }
 
-        width = Math.max(width, widthDayOfWeek + widthMonth + padding * 2);
+        width = (int) Math.max(width, widthDayOfWeek + widthMonth + padding * 2);
 
         height += padding;
 
@@ -187,7 +191,7 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
     }
 
     public void setColors(ArrayList<Integer> colors) {
-        this.colors = colors;
+        this.chartLinesColor = colors;
     }
 
     public void setValues(long time, ArrayList<Integer> values) {

@@ -34,7 +34,10 @@ class MainActivity : Activity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mNightMode = NightMode(this, R.style.AppTheme)
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
 
         setContentView(R.layout.activity_main)
 
@@ -42,7 +45,10 @@ class MainActivity : Activity(), View.OnClickListener {
         menuIconNightMode = findViewById<View>(R.id.mIconNightMode)
         lloContent = findViewById<LinearLayout?>(R.id.lloContent)
 
-        statusBarBack.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, U.getStatusBarHeight(this, resources.getDimension(R.dimen.statusBarHeight).toInt()))
+        statusBarBack.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            U.getStatusBarHeight(this, resources.getDimension(R.dimen.statusBarHeight).toInt())
+        )
 
         menuIconNightMode.setOnClickListener(this)
 
@@ -54,10 +60,18 @@ class MainActivity : Activity(), View.OnClickListener {
                 val charts = withContext(Dispatchers.Default) {
                     convertJsonToChartData(it)
                 }
+
+                val chart = this@MainActivity.findViewById<TChart>(R.id.tchart)
+                chart.setData(charts[0])
+
                 addChartsIntoActivity(charts)
             } ?: run {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivity, R.string.error_loading_example, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        R.string.error_loading_example,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -67,18 +81,32 @@ class MainActivity : Activity(), View.OnClickListener {
         var i = 0
         charts.forEach { chartData ->
             val layout = LinearLayout(this)
-            val linearLayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            linearLayoutParams.bottomMargin = resources.getDimension(R.dimen.chartBottomMargin).toInt()
+            val linearLayoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            linearLayoutParams.topMargin = resources.getDimension(R.dimen.chartBottomMargin).toInt()
+            linearLayoutParams.bottomMargin =
+                resources.getDimension(R.dimen.chartBottomMargin).toInt()
             layout.layoutParams = linearLayoutParams
             layout.orientation = LinearLayout.VERTICAL
             lloContent.addView(layout)
 
             val tChart = TChart(this)
-            val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            val layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
 
             tChart.layoutParams = layoutParams
             tChart.id = View.generateViewId()
-            tChart.setData(chartData, true)
+            tChart.setData(chartData)
+            tChart.setPadding(
+                resources.getDimension(R.dimen.cbHorizontalMargin).toInt(),
+                resources.getDimension(R.dimen.cbHorizontalMargin).toInt(),
+                resources.getDimension(R.dimen.cbHorizontalMargin).toInt(),
+                resources.getDimension(R.dimen.cbHorizontalMargin).toInt()
+            )
             tChart.setTitle(String.format("Chart #%d", i))
             layout.addView(tChart)
 
@@ -87,20 +115,27 @@ class MainActivity : Activity(), View.OnClickListener {
                 checkBox.tag = chartData.keys[i]
                 checkBox.text = chartData.names[i]
                 checkBox.isChecked = true
-                checkBox.setTextColor(getColor(R.color.textColor))
+                checkBox.setTextColor(this@MainActivity.resources.getColor(R.color.textColor))
                 checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                     tChart.showLine(buttonView.tag.toString(), isChecked)
                 }
 
-                val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf(-android.R.attr.state_checked))
+                val states = arrayOf(
+                    intArrayOf(android.R.attr.state_checked),
+                    intArrayOf(-android.R.attr.state_checked)
+                )
                 val colors = intArrayOf(chartData.colors[i], chartData.colors[i])
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     checkBox.buttonTintList = ColorStateList(states, colors)
                 }
-                val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                val layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
                 layoutParams.leftMargin = resources.getDimension(R.dimen.cbHorizontalMargin).toInt()
-                layoutParams.rightMargin = resources.getDimension(R.dimen.cbHorizontalMargin).toInt()
+                layoutParams.rightMargin =
+                    resources.getDimension(R.dimen.cbHorizontalMargin).toInt()
                 checkBox.layoutParams = layoutParams
                 layout.addView(checkBox)
             }

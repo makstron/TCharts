@@ -1,4 +1,4 @@
-package com.klim.tcharts;
+package com.klim.tcharts.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.klim.tcharts.Colors;
+import com.klim.tcharts.R;
 import com.klim.tcharts.entities.ChartData;
 import com.klim.tcharts.entities.ChartItem;
 import com.klim.tcharts.interfaces.OnSelectedTimeLineChanged;
@@ -23,13 +25,10 @@ public class NavigationView extends BaseView implements OnShowLinesListener {
 
     private ChartData data = null;
     private int maxValue;
-
     private long minTime;
     private long maxTime;
-
     private long startShowMinTime;
     private long startShowMaxTime;
-
     private float pixelInTime;
     private float pixelInValue;
 
@@ -45,48 +44,50 @@ public class NavigationView extends BaseView implements OnShowLinesListener {
 
     //params
     private float paddingDataGraph;
+    public Colors colors;
 
     //paints
     private Paint pForLine;
     private Paint pForHideLine;
 
-    public NavigationView(View view, int height) {
+    public NavigationView(View view, Colors colors) {
         super(view);
-        this.height = height;
-        selectedWindow = new SelectedWindow(this.view, height);
+        this.colors = colors;
+        selectedWindow = new SelectedWindow(this.view, colors);
 
         //params
         paddingDataGraph = getDimen(R.dimen.chartNavLineTopBottomPadding);
 
+        createAnimators();
+    }
+
+    public void init() {
+        createPaints();
+    }
+
+    private void createPaints() {
         //paints
         pForLine = PaintU.createPaint(Color.WHITE, Paint.Style.STROKE, getDimen(R.dimen.chartNavLineWeight));
         pForLine.setStrokeCap(Paint.Cap.ROUND);
 
-        pForHideLine = PaintU.createPaint(getColor(R.color.chartBackgroundColor), Paint.Style.STROKE, getDimen(R.dimen.chartNavLineWeight));
+        pForHideLine = PaintU.createPaint(colors.backgroundColor, Paint.Style.STROKE, getDimen(R.dimen.chartNavLineWeight));
         pForHideLine.setStrokeCap(Paint.Cap.ROUND);
-
-        createAnimators();
     }
 
     private void createAnimators() {
-        animatorsMaxValue = AnimatorU.createFloatValueAnimator(maxValueLocal, maxValue, 200, new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                maxValueLocal = (Float) animation.getAnimatedValue();
+        animatorsMaxValue = AnimatorU.createFloatValueAnimator(maxValueLocal, maxValue, 200, animation -> {
+            maxValueLocal = (Float) animation.getAnimatedValue();
 //                valueInPixel = availableHeight / maxValueLocal;
-                pixelInValue = (height - paddingDataGraph * 2) / maxValueLocal;
-                needRePrepare = true;
-                prepareUi();
-                invalidate();
-            }
+            pixelInValue = (height - paddingDataGraph * 2) / maxValueLocal;
+            prepareDataForPrinting(true);
+            invalidate();
         });
         animatorsMaxValue.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 enableShowLine = true;
-                needRePrepare = true;
-                prepareUi();
+                prepareDataForPrinting(true);
                 invalidate();
             }
         });
@@ -104,9 +105,22 @@ public class NavigationView extends BaseView implements OnShowLinesListener {
         }
     }
 
+    public int calculateHeight() {
+        return Math.round(getDimen(R.dimen.navViewDesiredHeight));
+    }
+
     @Override
-    public void prepareUi() {
-        if (needRePrepare) {
+    public void onSizeChanged() {
+        if (width != 0 && height != 0 && data != null) {
+            calculateTimeValueInPixel();
+            prepareDataForPrinting(false);
+        }
+        selectedWindow.onSizeChanged();
+    }
+
+    @Override
+    public void prepareDataForPrinting(boolean hardPrepare) {
+        if (needRePrepare || hardPrepare) {
             prepareLines = new ArrayList<>(data.getItems().get(0).getValues().size());
             float[] arrLines;
             for (int l = 0; l < data.getItems().get(0).getValues().size(); l++) {
@@ -148,10 +162,6 @@ public class NavigationView extends BaseView implements OnShowLinesListener {
 
     @Override
     public void drawOn(Canvas canvas) {
-        if (prepareLines == null) {
-            prepareUi();
-        }
-
         for (int l = 0; l < getView().linesForShow.length; l++) {
             if (getView().linesForShow[l] && (lineIndex != l || (enableShowLine && lineIndex == l))) {
                 //todo seted color every time?
@@ -188,9 +198,16 @@ public class NavigationView extends BaseView implements OnShowLinesListener {
         return selectedWindow.onTouchEvent(event);
     }
 
-    public void setData(ChartData data) {
+    public void setData(ChartData data, long start, long end) {
+        setStartPeriodTimes(start, end);
         this.data = data;
-        prepare();
+        updateMaxValue();
+        maxValueLocal = maxValue;
+        if (width != 0 && height != 0 && data != null) {
+            calculateTimeValueInPixel();
+            prepareDataForPrinting(false);
+        }
+        selectedWindow.onSizeChanged();
     }
 
     public void setPosX(float posX) {
@@ -207,32 +224,18 @@ public class NavigationView extends BaseView implements OnShowLinesListener {
         this.startShowMinTime = start;
         this.startShowMaxTime = end;
         selectedWindow.setStartPeriodTimes(start, end);
-        prepare();
     }
 
     @Override
-    public void setWidth(float width) {
+    public void setWidth(int width) {
         super.setWidth(width);
-        calculateTimeValueInPixel();
         selectedWindow.setWidth(width);
-        prepare();
-    }
-
-    void prepare() {
-        if (width != 0 && height != 0 && data != null && startShowMinTime != 0 && startShowMaxTime != 0) {
-            updateMaxValue();
-            maxValueLocal = maxValue;
-            calculateTimeValueInPixel();
-            needRePrepare = true;
-            prepareUi();
-        }
     }
 
     @Override
-    public void setHeight(float height) {
+    public void setHeight(int height) {
         super.setHeight(height);
         selectedWindow.setHeight(height);
-        prepare();
     }
 
     public void addOnSelectedTimeLineChanged(OnSelectedTimeLineChanged onSelectedTimeLineChanged) {

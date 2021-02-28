@@ -1,4 +1,4 @@
-package com.klim.tcharts;
+package com.klim.tcharts.views;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,7 +16,7 @@ public class BorderView extends BaseView {
     private boolean selected = false;
     private float shiftPositinTap;
 
-    public BorderView(View view, BorderType type, float posX, float posY, float width, float height, Paint pen) {
+    public BorderView(View view, BorderType type, float posX, float posY, int width, int height, Paint pen) {
         super(view);
         this.posX = posX;
         this.posY = posY;
@@ -41,7 +41,7 @@ public class BorderView extends BaseView {
     }
 
     @Override
-    public void prepareUi() {
+    public void prepareDataForPrinting(boolean hardPrepare) {
 
     }
 

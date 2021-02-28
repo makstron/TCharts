@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
     <View
         android:id="@+id/statusBarBack"
@@ -41,8 +42,8 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:background="@color/background">
+        android:background="@color/background"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/lloContent"
@@ -50,16 +51,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.klim.tcharts.TChart
+                android:id="@+id/tchart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="8dp"
+                android:padding="16dp"
+                app:backgroundColor="#FFFFFF"
+                app:detailDivisionColor="#efeff0"
+                app:detailLabelsFontColor="#506372"
+                app:detailLineSelectedPosition="#73C9D8E3"
+                app:infoWindowBackground="#FFFFFFFF"
+                app:infoWindowShadowColor="#5C000000"
+                app:infoWindowTitleColor="#222222"
+                app:navBordersColor="#477DA9CA"
+                app:navViewFillColor="#BAF5F8F9"
+                app:showTitle="true"
+                app:title="Title"
+                app:titleFontColor="#3896D4"
+                app:titleFontSize="16dp" />
+
         </LinearLayout>
 
     </com.klim.tcharts.example.CustomScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-
-    </LinearLayout>
 
 </LinearLayout>

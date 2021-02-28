@@ -1,4 +1,4 @@
-package com.klim.tcharts;
+package com.klim.tcharts.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -13,6 +13,8 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.klim.tcharts.Colors;
+import com.klim.tcharts.R;
 import com.klim.tcharts.entities.ChartData;
 import com.klim.tcharts.entities.ChartItem;
 import com.klim.tcharts.interfaces.OnSelectedTimeLineChanged;
@@ -31,20 +33,19 @@ import java.util.Iterator;
 
 public class DetailView extends BaseView implements OnSelectedTimeLineChanged, OnShowLinesListener {
     //params
+    private Colors colors;
     private int divisionCount;
     //dimen
     private float dimenLabelSize;
-    private float padding;
     private float availableWidth;
     private float topBottomChartPadding;
     private float labelPadding;
     private float selectedCircleRadius;
-    private float chartPadding;
 
     private ChartData data = null;
 
-    private Paint bitmapPaint;
-    private Paint fonLines;
+    private Paint pBitmap;
+    private Paint pDivisionColor;
     private Paint pForLine;
     private Paint pForLabel;
     private Paint pForSelectedLine;
@@ -95,38 +96,48 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     private boolean alignFromLeft = false;
     private float infoWindowPosition;
     private float newInfoWindowPosition;
+    private int infoWindowsTransparent;
 
-    public DetailView(View view, int height, int divisionCount) {
+    public DetailView(View view, Colors colors, int divisionCount) {
         super(view);
-        this.height = height;
         this.divisionCount = divisionCount;
+        this.colors = colors;
 
         //params
         dimenLabelSize = getDimen(R.dimen.labelSize);
         topBottomChartPadding = getDimen(R.dimen.detailViewBottomLineHeight);
         labelPadding = getDimen(R.dimen.labelPadding);
-        chartPadding = getDimen(R.dimen.chartPadding); //chart left/right lines padding
-        infoWindowPosition = chartPadding;
+        infoWindowPosition = getPaddingLeft();
         selectedCircleRadius = getDimen(R.dimen.selectedCircleRadius); //chart circle radius
 
+        infoWindowView = new InfoWindowView(view, colors);
+
+        createAnimators();
+    }
+
+    public void init() {
+        createPaints();
+        calculateTimeLabelMaxSize();
+    }
+
+    private void createPaints() {
         //paints
-        bitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
-        fonLines = PaintU.createPaint(getColor(R.color.fonLine1Color), Paint.Style.STROKE, getDimen(R.dimen.fonLineswWeight));
-        fonLines.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        pBitmap = new Paint(Paint.FILTER_BITMAP_FLAG);
+
+        pDivisionColor = PaintU.createPaint(colors.detailDivisionColor, Paint.Style.STROKE, getDimen(R.dimen.fonLineswWeight));
+        pDivisionColor.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+
         pForLine = PaintU.createPaint(Color.WHITE, Paint.Style.STROKE, getDimen(R.dimen.chartDetailLineHeight));
         pForLine.setStrokeCap(Paint.Cap.ROUND);
         pForLine.setStrokeJoin(Paint.Join.ROUND);
-        pForLabel = PaintU.createPaint(getColor(R.color.labelColor), Paint.Style.FILL);
+
+        pForLabel = PaintU.createPaint(colors.detailLabelsFontColor, Paint.Style.FILL);
         pForLabel.setTextSize(dimenLabelSize);
-        pForSelectedLine = PaintU.createPaint(getColor(R.color.lineSelectedPosition), Paint.Style.STROKE, getDimen(R.dimen.selectedLineWeight));
+
+        pForSelectedLine = PaintU.createPaint(colors.detailLineSelectedPosition, Paint.Style.STROKE, getDimen(R.dimen.selectedLineWeight));
         pForSelectedLine.setStrokeCap(Paint.Cap.BUTT);
-        pForEmptyCircle = PaintU.createPaint(getColor(R.color.chartBackgroundColor), Paint.Style.FILL, 0);
-        availableHeight = height - topBottomChartPadding * 2;
 
-        infoWindowView = new InfoWindowView(view);
-
-        createAnimators();
-        calculateTimeLabelMaxSize();
+        pForEmptyCircle = PaintU.createPaint(colors.backgroundColor, Paint.Style.FILL, 0);
     }
 
     private void createAnimators() {
@@ -135,9 +146,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
             public void onAnimationUpdate(ValueAnimator animation) {
                 maxValueLocal = (Float) animation.getAnimatedValue();
                 valueInPixel = availableHeight / maxValueLocal;
-                needRePrepare = true;
-                prepareUi();
-//                invalidate();
+                prepareDataForPrinting(true);
             }
         });
 
@@ -166,7 +175,14 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
         });
     }
 
-    int infoWindowsTransparent;
+    public int calculateHeight() {
+        return Math.round(getDimen(R.dimen.detailViewDesiredHeight));
+    }
+
+    @Override
+    public void onSizeChanged() {
+        prepare();
+    }
 
     private void calculateTimeLabelMaxSize() {
         Rect textBounds = new Rect();
@@ -283,10 +299,10 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     private void checkInfoWindow() {
         boolean isChanged = false;
         if (tapPositionX + newInfoWindowPosition + infoWindowView.getWidth() > width) {
-            newInfoWindowPosition = -chartPadding - infoWindowView.getWidth();
+            newInfoWindowPosition = -paddingRight - infoWindowView.getWidth();
             isChanged = true;
         } else if (tapPositionX + newInfoWindowPosition < 0) {
-            newInfoWindowPosition = chartPadding;
+            newInfoWindowPosition = paddingLeft;
             isChanged = true;
         }
         if (isChanged) {
@@ -301,8 +317,8 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     private boolean calculateExtendedTimeLimit() {
         float newMaxValue = 0;
         ChartItem chartItem;
-        long start = (long) (((float) startPeriod * timeInPixel - chartPadding) / timeInPixel);
-        long end = (long) (((float) endPeriod * timeInPixel + chartPadding) / timeInPixel);
+        long start = (long) (((float) startPeriod * timeInPixel - paddingLeft) / timeInPixel);
+        long end = (long) (((float) endPeriod * timeInPixel + paddingRight) / timeInPixel);
 
         extendedLeft = 0;
         if (start >= data.getItems().get(0).getTime() && start <= data.getItems().get(data.getItems().size() - 1).getTime()) {
@@ -331,9 +347,8 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     }
 
     @Override
-    public void prepareUi() {
-
-        if (needRePrepare) {
+    public void prepareDataForPrinting(boolean hardPrepare) {
+        if (needRePrepare || hardPrepare) {
             //prepareLines
             preparePath = new ArrayList<>(data.getItems().get(0).getValues().size());
             Path path;
@@ -347,7 +362,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
                     for (int i = extendedLeft; i <= extendedRight; i++) {
                         chartItem = data.getItems().get(i);
 
-                        curx = posX + (chartItem.getTime() - startPeriod) * timeInPixel + chartPadding;
+                        curx = posX + (chartItem.getTime() - startPeriod) * timeInPixel + paddingLeft;
                         cury = posY + availableHeight + topBottomChartPadding - valueInPixel * chartItem.getValues().get(l);
 
                         if (firstPoint) {
@@ -368,9 +383,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
 
     @Override
     public void drawOn(Canvas canvas) {
-        if (preparePath == null) {
-            prepareUi();
-        }
+        prepareDataForPrinting(false);
 
         //draw divisions lines
         Divider divider;
@@ -378,11 +391,11 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
         for (int i = 0; i < dividers.size(); i++) {
             divider = dividers.get(i);
             y = posY + availableHeight - valueInPixel * divider.value + topBottomChartPadding;
-            fonLines.setAlpha(divider.alpha);
-            canvas.drawLine(posX + padding, y, posX + padding + availableWidth, y, fonLines);
+            pDivisionColor.setAlpha(divider.alpha);
+            canvas.drawLine(posX + paddingLeft, y, posX + paddingLeft + availableWidth, y, pDivisionColor);
         }
-        fonLines.setAlpha(255);
-        canvas.drawLine(posX + padding, posY + topBottomChartPadding + availableHeight, posX + padding + availableWidth, posY + topBottomChartPadding + availableHeight, fonLines);
+        pDivisionColor.setAlpha(255);
+        canvas.drawLine(posX + paddingLeft, posY + topBottomChartPadding + availableHeight, posX + paddingLeft + availableWidth, posY + topBottomChartPadding + availableHeight, pDivisionColor);
 
         //draw lines (chart)
         if (preparePath != null) {
@@ -404,10 +417,10 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
             divider = dividers.get(i);
             y = posY + availableHeight - valueInPixel * divider.value + topBottomChartPadding - labelPadding;
             pForLabel.setAlpha(divider.alpha);
-            canvas.drawText(String.format("%d", (int) divider.value), posX + padding, y, pForLabel);
+            canvas.drawText(String.format("%d", (int) divider.value), posX + paddingLeft, y, pForLabel);
         }
         pForLabel.setAlpha(255);
-        canvas.drawText(String.format("%d", 0), posX + padding, posY + topBottomChartPadding + availableHeight - labelPadding, pForLabel);
+        canvas.drawText(String.format("%d", 0), posX + paddingLeft, posY + topBottomChartPadding + availableHeight - labelPadding, pForLabel);
 
         //draw time labels
         drawTimeLabels(canvas, timeLabels);
@@ -417,11 +430,11 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
         if (iAmPressed || animatorInfoWindowsAlpha.isRunning()) {
             float tapValidPositionX = tapPositionX;
             boolean outOfRight = false;
-            if (tapPositionX < chartPadding) {
-                tapValidPositionX = chartPadding;
+            if (tapPositionX < paddingLeft) {
+                tapValidPositionX = paddingLeft;
             }
-            if (tapPositionX > chartPadding + (int) availableWidth) {
-                tapValidPositionX = chartPadding + (int) availableWidth;
+            if (tapPositionX > paddingLeft + (int) availableWidth) {
+                tapValidPositionX = paddingLeft + (int) availableWidth;
                 outOfRight = true;
             }
 
@@ -429,7 +442,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
             canvas.drawLine(tapValidPositionX, posY + topBottomChartPadding, tapValidPositionX, posY + topBottomChartPadding + availableHeight, pForSelectedLine);
 
             //draw circle on lines
-            long selectedTime = (long) ((tapValidPositionX - chartPadding) / timeInPixel) + startPeriod;
+            long selectedTime = (long) ((tapValidPositionX - paddingLeft) / timeInPixel) + startPeriod;
             if (selectedTime < data.getItems().get(0).getTime()) {
                 selectedTime = data.getItems().get(0).getTime();
             } else if (selectedTime > data.getItems().get(data.getItems().size() - 1).getTime()) {
@@ -464,7 +477,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
                         circlePositionY = chartItemRight.getValues().get(i);
                     } else {
                         //interpolation
-                        circlePositionY = chartItemLeft.getValues().get(i) + (chartItemRight.getValues().get(i) - chartItemLeft.getValues().get(i)) * ((((tapValidPositionX - chartPadding) / timeInPixel + startPeriod) - chartItemLeft.getTime()) / (chartItemRight.getTime() - chartItemLeft.getTime()));
+                        circlePositionY = chartItemLeft.getValues().get(i) + (chartItemRight.getValues().get(i) - chartItemLeft.getValues().get(i)) * ((((tapValidPositionX - paddingLeft) / timeInPixel + startPeriod) - chartItemLeft.getTime()) / (chartItemRight.getTime() - chartItemLeft.getTime()));
                     }
                     values.add((int) circlePositionY);
                     circlePositionY = availableHeight - circlePositionY * valueInPixel + topBottomChartPadding;
@@ -489,9 +502,9 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     private void drawTimeLabels(Canvas canvas, ArrayList<TimeLabel> timeLabels) {
         for (TimeLabel timeLabel : timeLabels) {
             if (timeLabel.alpha > 0) {
-                pForLabel.setColor(ColorU.colorSetA(getColor(R.color.labelColor), timeLabel.alpha));
+                pForLabel.setColor(ColorU.colorSetA(colors.detailLabelsFontColor, timeLabel.alpha));
                 canvas.drawText(timeLabel.label,
-                        posX + (timeLabel.time - startPeriod) * timeInPixel + chartPadding,
+                        posX + (timeLabel.time - startPeriod) * timeInPixel + paddingLeft,
                         posY + availableHeight + topBottomChartPadding + dimenLabelSize + labelPadding,
                         pForLabel);
             }
@@ -524,7 +537,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
             startPeriod = start;
             endPeriod = end;
 
-            timeInPixel = (float) (width - chartPadding * 2) / (endPeriod - startPeriod);
+            timeInPixel = (float) (width - paddingLeft * 2) / (endPeriod - startPeriod);
 
             boolean maxValueChange = calculateExtendedTimeLimit();
             if (maxValueLocal == 0) {
@@ -649,22 +662,15 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
         return labels;
     }
 
-    public void setPadding(float padding) {
-        this.padding = padding;
-    }
-
     public void setPosY(float posY) {
         this.posY = posY;
         infoWindowView.setPosY(posY);
     }
 
-    public void setAvailableWidth(float availableWidth) {
-        this.availableWidth = availableWidth;
-        prepare();
-    }
-
-    public void setData(ChartData data) {
+    public void setData(ChartData data, long start, long end) {
         this.data = data;
+        this.startPeriod = start;
+        this.endPeriod = end;
         needRePrepare = true;
         infoWindowView.setNames(data.getNames());
         infoWindowView.setColors(data.getColors());
@@ -672,12 +678,12 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
         prepare();
     }
 
-    void prepare() {
-        if (width != 0 && height != 0 && availableWidth != 0 && data != null && startPeriod != 0 && endPeriod != 0) {
-            timeInPixel = (float) (width - chartPadding * 2) / (endPeriod - startPeriod);
-            valueInPixel = availableHeight / maxValueLocal;
+    public void prepare() {
+        if (width != 0 && height != 0 && availableWidth != 0 && data != null && endPeriod != 0) {
+            timeInPixel = (float) (width - paddingLeft * 2) / (endPeriod - startPeriod);
             calculateExtendedTimeLimit();
             maxValueLocal = newMaxValueLocal;
+            valueInPixel = availableHeight / maxValueLocal;
             Pair<ArrayList<Divider>, ArrayList<Divider>> p = dividersCalc();
             startDividersAnimator(p.first, "hide");
             startDividersAnimator(p.second, "show");
@@ -715,15 +721,15 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     }
 
     @Override
-    public void setWidth(float width) {
+    public void setWidth(int width) {
         super.setWidth(width);
-        prepare();
+        this.availableWidth = width - getPaddingLeft() - getPaddingRight();
     }
 
     @Override
-    public void setHeight(float height) {
+    public void setHeight(int height) {
         super.setHeight(height);
-        prepare();
+        availableHeight = height - topBottomChartPadding * 2;
     }
 
     private class TimeLabel {

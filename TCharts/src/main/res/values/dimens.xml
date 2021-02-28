@@ -1,12 +1,15 @@
 <resources>
-    <dimen name="tapCircleRadius">48dp</dimen>
-    <integer name="tapCircleDuration">400</integer>
+    <dimen name="paddingDefault">16dp</dimen>
 
-    <dimen name="chartPadding">18dp</dimen>
-    <dimen name="chartTitleSize">16dp</dimen>
+    <!-- title -->
+    <dimen name="titleFontSize">16sp</dimen>
+    <dimen name="minTitleHeight">8dp</dimen>
+    <dimen name="titlePaddingTop">8dp</dimen>
+    <dimen name="titlePaddingBottom">8dp</dimen>
 
     <!-- detail view -->
-    <dimen name="detailViewSize">327dp</dimen>
+    <dimen name="detailViewDesiredHeight">327dp</dimen>
+
     <dimen name="detailViewBottomLineHeight">24dp</dimen>
     <dimen name="fonLineswWeight">0.5dp</dimen>
     <dimen name="chartDetailLineHeight">2.0dp</dimen>
@@ -22,7 +25,7 @@
     <dimen name="infoWindowLabelValSize">16dp</dimen>
 
     <!-- nav view -->
-    <dimen name="chartNavLineHeight">42dp</dimen>
+    <dimen name="navViewDesiredHeight">42dp</dimen>
     <dimen name="chartNavBorderWidth">5dp</dimen>
     <dimen name="chartNavBorderTopHeight">1.5dp</dimen>
     <dimen name="chartNavLineTopBottomPadding">3dp</dimen>

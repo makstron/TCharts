@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="TChart">
+        <attr name="backgroundColor" format="color" />
+
+        <attr name="showTitle" format="boolean" />
         <attr name="title" format="string" />
-<!--        <attr name="showSettings" format="boolean" />-->
-        <!--<attr name="labelPosition" format="enum">-->
-            <!--<enum name="left" value="0" />-->
-            <!--<enum name="right" value="1" />-->
-        <!--</attr>-->
+        <attr name="titleFontSize" format="dimension" />
+        <attr name="titleFontColor" format="color" />
+
+        <attr name="detailLabelsFontColor" format="color" />
+        <attr name="detailDivisionColor" format="color" />
+        <attr name="detailLineSelectedPosition" format="color" />
+
+        <attr name="infoWindowBackground" format="color" />
+        <attr name="infoWindowShadowColor" format="color" />
+        <attr name="infoWindowTitleColor" format="color" />
+
+        <attr name="navViewFillColor" format="color" />
+        <attr name="navBordersColor" format="color" />
+        <attr name="navTapCircleColor" format="color" />
+
     </declare-styleable>
 </resources>

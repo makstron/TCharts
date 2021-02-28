@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="chartBackgroundColor">#1D2733</color>
+    <color name="chartBackground">#1D2733</color>
 
-    <color name="tapCircle">#90353535</color>
+    <color name="titleFont">#7BC4FB</color>
 
-    <color name="titleColor">#7BC4FB</color>
+    <color name="detailLabelsFont">#506372</color>
+    <color name="detailDivision">#151e2a</color>
+    <color name="lineSelectedPosition">#AD0E1721</color>
 
-    <color name="navGray">#BD19232E</color>
-    <color name="navGrayBorder">#477DA9CA</color>
+    <color name="infoWindowBackground">#FF202b38</color>
+    <color name="infoWindowShadow">#5C000000</color>
+    <color name="infoWindowTitle">#FFFFFF</color>
+
+    <color name="navFill">#BD19232E</color>
+    <color name="navBorders">#477DA9CA</color>
     <color name="navTapCircle">#8043515c</color>
 
-    <color name="lineSelectedPosition">#AD0E1721</color>
-    <color name="infoWindowBackground">#FF202b38</color>
-    <color name="infoWindowTitleColor">#FFFFFF</color>
-    <color name="infoWindowShadowColor">#5C000000</color>
-
-
-    <color name="fonLine1Color">#151e2a</color>
-    <color name="labelColor">#506372</color>
-
-    <!-- ShowLinesView -->
-    <color name="shoeLinesLabel">#FFFFFF</color>
-    <color name="shoeLinesDivider">#0d1520</color>
 </resources>

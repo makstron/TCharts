@@ -1,4 +1,4 @@
-package com.klim.tcharts;
+package com.klim.tcharts.views;
 
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
@@ -7,6 +7,8 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.klim.tcharts.Colors;
+import com.klim.tcharts.R;
 import com.klim.tcharts.enums.BorderType;
 
 import com.klim.tcharts.interfaces.OnSelectedTimeLineChanged;
@@ -41,18 +43,17 @@ public class SelectedWindow extends BaseView {
     private long minTime;
     private long maxTime;
 
-    public SelectedWindow(View view, float height) {
+    public SelectedWindow(View view, Colors colors) {
         super(view);
-        this.height = height;
 
-        pForGray = PaintU.createPaint(getColor(R.color.navGray), Paint.Style.FILL);
-        pen = PaintU.createPaint(getColor(R.color.navGrayBorder), Paint.Style.FILL);
-        pTapCircle = PaintU.createPaint(getColor(R.color.navTapCircle), Paint.Style.FILL);
+        pForGray = PaintU.createPaint(colors.navFillColor, Paint.Style.FILL);
+        pen = PaintU.createPaint(colors.navBordersColor, Paint.Style.FILL);
+        pTapCircle = PaintU.createPaint(colors.navTapCircleColor, Paint.Style.FILL);
 
-        borderViewLeft = new BorderView(view, BorderType.LEFT, 400, posY, getDimen(R.dimen.chartNavBorderWidth), height, pen);
-        borderViewRight = new BorderView(view, BorderType.RIGHT, posX + width, posY, getDimen(R.dimen.chartNavBorderWidth), height, pen);
+        borderViewLeft = new BorderView(view, BorderType.LEFT, 400, posY, Math.round(getDimen(R.dimen.chartNavBorderWidth)), getHeight(), pen);
+        borderViewRight = new BorderView(view, BorderType.RIGHT, posX + width, posY, Math.round(getDimen(R.dimen.chartNavBorderWidth)), getHeight(), pen);
 
-        maxCircRadius = height * 0.8f;
+        maxCircRadius = getHeight() * 0.8f;
 
         createAnimators();
     }
@@ -68,7 +69,7 @@ public class SelectedWindow extends BaseView {
     }
 
     @Override
-    public void prepareUi() {
+    public void prepareDataForPrinting(boolean hardPrepare) {
 
     }
 
@@ -208,7 +209,6 @@ public class SelectedWindow extends BaseView {
     public void setStartPeriodTimes(long start, long end) {
         startShowMinTime = start;
         startShowMaxTime = end;
-        agrrr();
     }
 
     @Override
@@ -219,20 +219,19 @@ public class SelectedWindow extends BaseView {
     }
 
     @Override
-    public void setHeight(float height) {
+    public void setHeight(int height) {
         super.setHeight(height);
         borderViewLeft.setHeight(height);
         borderViewRight.setHeight(height);
-        agrrr();
     }
 
     @Override
-    public void setWidth(float width) {
+    public void setWidth(int width) {
         super.setWidth(width);
-        agrrr();
     }
 
-    private void agrrr() {
+    @Override
+    public void onSizeChanged() {
         if (width != 0 && height != 0 && startShowMinTime != 0 && startShowMaxTime != 0 && minTime != 0 && maxTime != 0) {
             moveBordersToStart();
         }

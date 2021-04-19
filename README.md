@@ -4,7 +4,7 @@
 
 Simple and fast charts.
 
-Current version Beta 0.9.1
+Current version Beta 0.9.2
 
 ## Preview
 ![](https://raw.githubusercontent.com/makstron/TCharts/main/info/preview.webp)<br /><br />

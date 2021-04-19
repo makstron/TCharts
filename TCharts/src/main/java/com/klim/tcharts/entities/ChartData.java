@@ -1,16 +1,17 @@
 package com.klim.tcharts.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChartData {
-    private ArrayList<String> keys;
-    private ArrayList<String> names;
-    private ArrayList<Integer> colors;
-    private ArrayList<ChartItem> items;
+    private List<String> keys;
+    private List<String> names;
+    private List<Integer> colors;
+    private List<ChartItem> items;
     //    private ArrayList<Boolean> linesForShow;
     private ArrayList<Integer> maxValueInLine;
 
-    public ChartData(ArrayList<String> keys, ArrayList<String> names, ArrayList<Integer> colors, ArrayList<ChartItem> items) {
+    public ChartData(List<String> keys, List<String> names, List<Integer> colors, List<ChartItem> items) {
         this.keys = keys;
         this.names = names;
         this.colors = colors;
@@ -35,19 +36,19 @@ public class ChartData {
         }
     }
 
-    public ArrayList<String> getKeys() {
+    public List<String> getKeys() {
         return keys;
     }
 
-    public ArrayList<String> getNames() {
+    public List<String> getNames() {
         return names;
     }
 
-    public ArrayList<Integer> getColors() {
+    public List<Integer> getColors() {
         return colors;
     }
 
-    public ArrayList<ChartItem> getItems() {
+    public List<ChartItem> getItems() {
         return items;
     }
 

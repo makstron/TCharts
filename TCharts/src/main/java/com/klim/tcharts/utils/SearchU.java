@@ -3,6 +3,7 @@ package com.klim.tcharts.utils;
 import com.klim.tcharts.entities.ChartItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchU {
 
@@ -16,7 +17,7 @@ public class SearchU {
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
-    public static int binarySearchLeft(ArrayList<ChartItem> arr, int l, int r, long x) {
+    public static int binarySearchLeft(List<ChartItem> arr, int l, int r, long x) {
         if (r >= l) {
             int mid = l + (r - l) / 2;
             if (arr.get(Math.max(mid - 1, 0)).getTime() <= x && x < arr.get(mid).getTime()) {
@@ -33,7 +34,7 @@ public class SearchU {
         return -1;
     }
 
-    public static int binarySearchRight(ArrayList<ChartItem> arr, int l, int r, long x) {
+    public static int binarySearchRight(List<ChartItem> arr, int l, int r, long x) {
         if (r >= l) {
             int mid = l + (r - l) / 2;
 

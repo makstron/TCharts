@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class InfoWindowView extends BaseView implements OnShowLinesListener {
     private Colors colors;
@@ -34,9 +35,9 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
     private float infoWindowLabelValSize;
 
     private long time;
-    private ArrayList<String> names;
-    private ArrayList<Integer> chartLinesColor;
-    private ArrayList<Integer> values;
+    private List<String> names;
+    private List<Integer> chartLinesColor;
+    private List<Integer> values;
 
     private Paint bBitmap;
     private Paint pBackground;
@@ -186,11 +187,11 @@ public class InfoWindowView extends BaseView implements OnShowLinesListener {
         height += padding;
     }
 
-    public void setNames(ArrayList<String> names) {
+    public void setNames(List<String> names) {
         this.names = names;
     }
 
-    public void setColors(ArrayList<Integer> colors) {
+    public void setColors(List<Integer> colors) {
         this.chartLinesColor = colors;
     }
 

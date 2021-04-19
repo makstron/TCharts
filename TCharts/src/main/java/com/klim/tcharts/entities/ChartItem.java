@@ -1,13 +1,13 @@
 package com.klim.tcharts.entities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ChartItem {
     private long time;
-    private ArrayList<Integer> values;
+    private List<Integer> values;
     private int maxValue;
 
-    public ChartItem(long time, ArrayList<Integer> values) {
+    public ChartItem(long time, List<Integer> values) {
         this.time = time;
         this.values = values;
 
@@ -24,7 +24,7 @@ public class ChartItem {
         return time;
     }
 
-    public ArrayList<Integer> getValues() {
+    public List<Integer> getValues() {
         return values;
     }
 

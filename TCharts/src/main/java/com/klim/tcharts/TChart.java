@@ -81,7 +81,7 @@ public class TChart extends View implements OnSelectedTimeLineChanged {
     private void init(AttributeSet attrs) {
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        int [] attributes = new int [] {android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom};
+        int[] attributes = new int[]{android.R.attr.paddingLeft, android.R.attr.paddingTop, android.R.attr.paddingRight, android.R.attr.paddingBottom};
         TypedArray arr = getContext().obtainStyledAttributes(attrs, attributes);
         int leftPadding = 0;
         int topPadding = 0;
@@ -156,25 +156,33 @@ public class TChart extends View implements OnSelectedTimeLineChanged {
 
     private void setPlaceholder() {
         if (isInEditMode()) {
-            ArrayList<String> keys = new ArrayList<String>();
-            ArrayList<String> names = new ArrayList<String>();
-            ArrayList<Integer> colors = new ArrayList<Integer>();
-            ArrayList<ChartItem> items = new ArrayList<ChartItem>();
+            ArrayList<String> keys = new ArrayList<String>(); //keys for each chart
+            ArrayList<String> names = new ArrayList<String>(); //names for chart
+            ArrayList<Integer> colors = new ArrayList<Integer>(); //colors for lines
+            ArrayList<ChartItem> items = new ArrayList<ChartItem>(); //charts value for some time
+            //ChartItem
+            // time - time point (on x line)
+            // values - list values for this moment of time in order from keys
+
             keys.add("y0");
             keys.add("y1");
             names.add("Red Line");
             names.add("Green Line");
-            colors.add(Color.RED);
-            colors.add(Color.GREEN);
+            colors.add(Color.parseColor("#EA4335"));
+            colors.add(Color.parseColor("#34A853"));
 
             long startTime = 1614542230000L;
             Random random = new Random();
             for (int i = 0; i < 100; i++) {
+                //time moment
                 startTime += 86_400_000;
+
+                //all values for this time moment
                 ArrayList<Integer> values = new ArrayList<Integer>();
                 for (int j = 0; j < keys.size(); j++) {
-                    values.add(random.nextInt(1000));
+                    values.add(random.nextInt(100) + (i > 90 ? 100 : 0));
                 }
+
                 ChartItem chartItem = new ChartItem(startTime, values);
                 items.add(chartItem);
             }

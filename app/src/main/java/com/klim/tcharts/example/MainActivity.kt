@@ -152,6 +152,7 @@ class MainActivity : Activity(), View.OnClickListener {
 
     private fun loadJSONFromAsset(): String? {
         try {
+//            val inputStream = assets.open("all_chart_data.json")
             val inputStream = assets.open("chart_data.json")
             val size = inputStream.available()
             val buffer = ByteArray(size)

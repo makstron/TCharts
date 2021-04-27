@@ -17,6 +17,7 @@
     <dimen name="labelPadding">6dp</dimen>
     <dimen name="selectedLineWeight">1.5dp</dimen>
     <dimen name="selectedCircleRadius">4dp</dimen>
+    <dimen name="infoWindowFingerPadding">16dp</dimen>
     <dimen name="infoWindowRoutedCorners">6dp</dimen>
     <dimen name="infoWindowPadding">6dp</dimen>
     <dimen name="infoWindowShadow">1.5dp</dimen>

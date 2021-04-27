@@ -389,7 +389,11 @@ public class TChart extends View implements OnSelectedTimeLineChanged {
             linesForShow[i] = true;
         }
 
-        selectedStartTime = data.getItems().get(data.getItems().size() - (int) (data.getItems().size() / 3)).getTime();
+        int startTime = 0;
+        if (data.getItems().size() >= 9) {
+            startTime = data.getItems().size() - (int) (data.getItems().size() / 3);
+        }
+        selectedStartTime = data.getItems().get(startTime).getTime();
         selectedEndTime = data.getItems().get(data.getItems().size() - 1).getTime();
 
         detailView.setData(data, selectedStartTime, selectedEndTime);

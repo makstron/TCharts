@@ -32,6 +32,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 public class DetailView extends BaseView implements OnSelectedTimeLineChanged, OnShowLinesListener {
+    private int PART_PERIOD_OF_TIME = 5;  //means that 5 time labels will be showed
+
     //params
     private Colors colors;
     private int divisionCount;
@@ -94,6 +96,7 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     private int alphaLine = 255;
 
     private boolean alignFromLeft = false;
+    private  float INFO_WINDOW_FINGER_PADDING;
     private float infoWindowPosition;
     private float newInfoWindowPosition;
     private int infoWindowsTransparent;
@@ -107,7 +110,8 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
         dimenLabelSize = getDimen(R.dimen.labelSize);
         topBottomChartPadding = getDimen(R.dimen.detailViewBottomLineHeight);
         labelPadding = getDimen(R.dimen.labelPadding);
-        infoWindowPosition = getPaddingLeft();
+        INFO_WINDOW_FINGER_PADDING = getDimen(R.dimen.infoWindowFingerPadding);
+        infoWindowPosition = INFO_WINDOW_FINGER_PADDING;
         selectedCircleRadius = getDimen(R.dimen.selectedCircleRadius); //chart circle radius
 
         infoWindowView = new InfoWindowView(view, colors);
@@ -299,10 +303,10 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
     private void checkInfoWindow() {
         boolean isChanged = false;
         if (tapPositionX + newInfoWindowPosition + infoWindowView.getWidth() > width) {
-            newInfoWindowPosition = -paddingRight - infoWindowView.getWidth();
+            newInfoWindowPosition = -INFO_WINDOW_FINGER_PADDING - infoWindowView.getWidth();
             isChanged = true;
         } else if (tapPositionX + newInfoWindowPosition < 0) {
-            newInfoWindowPosition = paddingLeft;
+            newInfoWindowPosition = INFO_WINDOW_FINGER_PADDING;
             isChanged = true;
         }
         if (isChanged) {
@@ -473,11 +477,16 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
                     pForLine.setColor(data.getColors().get(i));
                     if (selectedNearLeftPosition == selectedNearRightPosition) {
                         circlePositionY = chartItemLeft.getValues().get(i);
-                    } else if (selectedNearRightPosition == data.getItems().size() - 1 && outOfRight) {
+                    } /*else if (selectedNearRightPosition == data.getItems().size() - 1 && outOfRight) {
                         circlePositionY = chartItemRight.getValues().get(i);
-                    } else {
+                    }*/ else {
                         //interpolation
-                        circlePositionY = chartItemLeft.getValues().get(i) + (chartItemRight.getValues().get(i) - chartItemLeft.getValues().get(i)) * ((((tapValidPositionX - paddingLeft) / timeInPixel + startPeriod) - chartItemLeft.getTime()) / (chartItemRight.getTime() - chartItemLeft.getTime()));
+                        circlePositionY = chartItemLeft.getValues().get(i) + //left data item
+                                (chartItemRight.getValues().get(i) - chartItemLeft.getValues().get(i)) * // different between left and right value
+                                        ( //x align proportion
+                                                (float) (((long)((tapValidPositionX - paddingLeft) / timeInPixel) + startPeriod) - chartItemLeft.getTime()) / //finger position
+                                                (chartItemRight.getTime() - chartItemLeft.getTime()) // time between two values
+                                        );
                     }
                     values.add((int) circlePositionY);
                     circlePositionY = availableHeight - circlePositionY * valueInPixel + topBottomChartPadding;
@@ -557,14 +566,22 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
                 }
             }
 
+
+
             if (periodTimeLabel == 0) {
-                periodTimeLabel = (int) (((float) extendedRight - (float) extendedLeft) / 5);
+                if (extendedRight - extendedLeft < PART_PERIOD_OF_TIME) {
+                    periodTimeLabel = 1;
+                } else {
+                    periodTimeLabel = (int) (((float) extendedRight - (float) extendedLeft) / PART_PERIOD_OF_TIME);
+                }
             }
             if (changeZoom) {
                 if (periodTimeLabel != 0) {
                     float widthBetween = data.getItems().get(periodTimeLabel).getTime() * timeInPixel - data.getItems().get(0).getTime() * timeInPixel; //width between two time label
                     if (widthBetween < timeLabelWidth) {
                         newPeriodTimeLabel = periodTimeLabel * 2;
+                        if (newPeriodTimeLabel >= data.getItems().size())
+                            newPeriodTimeLabel = data.getItems().size() - 1;
                     } else if (widthBetween > timeLabelWidth * 2) {
                         int cD = (int) (widthBetween / (timeLabelWidth * 2f)) + 1;
                         newPeriodTimeLabel = (int) ((float) periodTimeLabel / (float) cD);
@@ -634,12 +651,16 @@ public class DetailView extends BaseView implements OnSelectedTimeLineChanged, O
 
     private ArrayList<TimeLabel> addTimeLabelIfNeed(int startA) {
         if (periodTimeLabel == 0) {
-            periodTimeLabel = (int) (((float) extendedRight - (float) extendedLeft) / 5);
+            if (extendedRight - extendedLeft < PART_PERIOD_OF_TIME) {
+                periodTimeLabel = 1;
+            } else {
+                periodTimeLabel = (int) (((float) extendedRight - (float) extendedLeft) / PART_PERIOD_OF_TIME);
+            }
         }
 
         ArrayList<TimeLabel> labels = new ArrayList<>();
         ChartItem chartItem;
-        for (int i = extendedLeft; i <= extendedRight; i++) {
+        for (int i = extendedLeft; i <= extendedRight; i++) {//todo could be optimized (do not need to check each element if you know period)
             if (i % periodTimeLabel == 0) {
                 chartItem = data.getItems().get(i);
 
